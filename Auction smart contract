@@ -55,17 +55,26 @@ contract Auction{
         _;
     }
 
+    //Events
+    event BidPlaced(address indexed bidder, uint amount);
+    event AuctionEnded(address winner, uint highestBid);
+    event AuctionCancelled();
+
+    // FUNCTIONS
+
     function EndlAuc() public Owner{// to cancel the auction
         auctionstate = auction_state.ended;
+        emit AuctionEnded(highestBidder, highestPayaleBid);
     }
 
     function CancelAuc() public Owner{// to cancel the auction
         auctionstate = auction_state.cancelled;
+        emit AuctionCancelled();
     }
-
+    
     
 
-    function min(uint a, uint b) pure private returns (uint){// function to find the min in two inpute
+    function min(uint a, uint b) pure private returns (uint){// function to find the min in two inputs
         if (a<=b)
         return a;
 
@@ -91,6 +100,8 @@ contract Auction{
             highestPayaleBid = min(currentBid, bids[highestBidder]+bidIncrement);
             highestBidder = payable(msg.sender);
         }
+
+        emit BidPlaced(msg.sender, currentBid);
     }
 
     function finalizedAuction()  public {// can be accessed by : : Auctioneer, : : Bidder
